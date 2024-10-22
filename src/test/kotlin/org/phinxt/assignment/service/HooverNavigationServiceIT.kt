@@ -2,6 +2,7 @@ package org.phinxt.assignment.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.phinxt.assignment.api.HooverNavigationApiRequestDto
+import org.phinxt.assignment.util.Point
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,9 +23,9 @@ class HooverNavigationServiceIT {
     fun `patch passed over more than once, should be reported only once`() {
         // When
         val result = hooverNavigationService.navigate(
-            roomSize = listOf(5,5),
-            coords = listOf(1,2),
-            patches = listOf(listOf(1,0), listOf(2,2), listOf(2,3)),
+            roomSize = Point(5,5),
+            coords = Point(1,2),
+            patches = listOf(Point(1,0), Point(2,2), Point(2,3)),
             instructions = "NNESEESWNWW",
             validate = true
         )
@@ -38,9 +39,9 @@ class HooverNavigationServiceIT {
     fun `if no instructions and there is a patch on the starting point, it should be cleaned`() {
         // When
         val result = hooverNavigationService.navigate(
-            roomSize = listOf(5,5),
-            coords = listOf(1,2),
-            patches = listOf(listOf(1,2), listOf(2,2), listOf(2,3)),
+            roomSize = Point(5,5),
+            coords = Point(1,2),
+            patches = listOf(Point(1,2), Point(2,2), Point(2,3)),
             instructions = null,
             validate = true
         )
@@ -54,9 +55,9 @@ class HooverNavigationServiceIT {
     fun `if a wall is hit, the hoover should stay at position an not move`() {
         // When
         val result = hooverNavigationService.navigate(
-            roomSize = listOf(5,5),
-            coords = listOf(1,2),
-            patches = listOf(listOf(1,2), listOf(0,2), listOf(2,3)),
+            roomSize = Point(5,5),
+            coords = Point(1,2),
+            patches = listOf(Point(1,2), Point(0,2), Point(2,3)),
             instructions = "WWWSS",
             validate = true
         )
@@ -70,9 +71,9 @@ class HooverNavigationServiceIT {
     fun `patch passed more than once on the list, should be reported only once as cleaned`() {
         // When
         val result = hooverNavigationService.navigate(
-            roomSize = listOf(5,5),
-            coords = listOf(1,2),
-            patches = listOf(listOf(2,3), listOf(2,3), listOf(2,3)),
+            roomSize = Point(5,5),
+            coords = Point(1,2),
+            patches = listOf(Point(2,3), Point(2,3), Point(2,3)),
             instructions = "NNESEESWNWW",
             validate = true
         )
@@ -86,9 +87,9 @@ class HooverNavigationServiceIT {
     fun `lowercase instructions also work`() {
         // When
         val result = hooverNavigationService.navigate(
-            roomSize = listOf(2,2),
-            coords = listOf(0,0),
-            patches = listOf(listOf(0,2)),
+            roomSize = Point(2,2),
+            coords = Point(0,0),
+            patches = listOf(Point(0,2)),
             instructions = "nNee",
             validate = true
         )

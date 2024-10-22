@@ -70,7 +70,6 @@ There are two services and a controller on the project. The controller handles t
 and returns a 400 in case validation fails. On a successful validation, the navigation service is called and performs the necessary actions in order to calculate
 the hoover position on the space, after all instructions are performed. A POST is used for the endpoint. In a future version we could have resources (hoovers) 
 that are persisted and could be identified by their id or (unique) name for this endpoint.
-Note: The points are handled as a list of 2 elements. We could define a domain data class for this, but I feel that in the context of this assignment, this should be enough. 
 
 #### Patches  
 Patches are given by the user as a list and they are converted to a map on the HooverNavigationService. The key is the location on the grid. This is because

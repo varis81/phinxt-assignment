@@ -7,6 +7,8 @@ import org.phinxt.assignment.service.CoordinateValidationService
 import org.phinxt.assignment.service.HooverNavigationService
 import org.phinxt.assignment.service.convertToDto
 import org.phinxt.assignment.util.logger
+import org.phinxt.assignment.util.toPoint
+import org.phinxt.assignment.util.toPoints
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,9 +30,9 @@ class RoboticHooverApiController(
         val roomSize = requireNotNull(request.roomSize)
         val coords = requireNotNull(request.coords)
         val validationResult = coordinateValidationService.validateCoordinates(
-            roomSize = roomSize,
-            coords = coords,
-            patches = request.patches,
+            roomSize = roomSize.toPoint(),
+            coords = coords.toPoint(),
+            patches = request.patches?.toPoints(),
             instructions = request.instructions
         )
         log.info("Input validation result: $validationResult")
@@ -40,9 +42,9 @@ class RoboticHooverApiController(
                 .body("Some or all points supplied are not inside the room: ${validationResult.message}")
 
         val hooverNavigationResult = hooverNavigationService.navigate(
-            roomSize = roomSize,
-            coords = coords,
-            patches = request.patches,
+            roomSize = roomSize.toPoint(),
+            coords = coords.toPoint(),
+            patches = request.patches?.toPoints(),
             instructions = request.instructions,
             validate = false // we already validated above
         )

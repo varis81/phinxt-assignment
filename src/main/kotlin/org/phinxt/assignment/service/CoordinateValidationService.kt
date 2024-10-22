@@ -1,5 +1,6 @@
 package org.phinxt.assignment.service
 
+import org.phinxt.assignment.util.Point
 import org.springframework.stereotype.Service
 
 @Service
@@ -7,7 +8,7 @@ class CoordinateValidationService : CoordinateValidationI {
 
     // Here we should assume valid values for all parameters.
     // However, we revalidate them so that we can have a standalone service that can be used in other places as well
-    override fun validateCoordinates(roomSize: List<Int>?, coords: List<Int>?, patches: List<List<Int>>?, instructions: String?): ValidationResult {
+    override fun validateCoordinates(roomSize: Point?, coords: Point?, patches: List<Point>?, instructions: String?): ValidationResult {
         if (!areParametersValid(
                 roomSize = roomSize,
                 coords =  coords,
@@ -42,21 +43,14 @@ class CoordinateValidationService : CoordinateValidationI {
         return ValidationResult(valid = true)
     }
 
-    override fun isPointInsideRectangle(roomSize: List<Int>, point: List<Int>): Boolean {
-        // define the variables for clarity
-        val roomX = roomSize.get(0)
-        val roomY = roomSize.get(1)
-
-        val pointX = point.get(0)
-        val pointY = point.get(1)
-
+    override fun isPointInsideRectangle(roomSize: Point, point: Point): Boolean {
         // we assume that the points (0,0) and (roomX,roomY) are valid positions for the hoover
-        if (pointX >= 0 && pointX <= roomX && pointY >= 0 && pointY <= roomY)
+        if (point.x >= 0 && point.x <= roomSize.x && point.y >= 0 && point.y <= roomSize.y)
             return true
         return false
     }
 
-    private fun areParametersValid(roomSize: List<Int>?, coords: List<Int>?, patches: List<List<Int>>?): Boolean {
+    private fun areParametersValid(roomSize: Point?, coords: Point?, patches: List<Point>?): Boolean {
         if (!validate(roomSize)) return false
         if (!validate(coords)) return false
         patches?.forEach { patch ->
@@ -65,8 +59,8 @@ class CoordinateValidationService : CoordinateValidationI {
         return true
     }
 
-    private fun validate(value: List<Int>?): Boolean {
-        if (value == null || value.size != 2 || value.get(0) < 0 || value.get(1) < 0)
+    private fun validate(point: Point?): Boolean {
+        if (point == null || point.x < 0 || point.y < 0)
             return false
         return true
     }

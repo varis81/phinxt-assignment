@@ -197,7 +197,7 @@ class RoboticHooverApiControllerIT {
         // Then the response should be BAD REQUEST (400)
         result.andExpect {
             status { isBadRequest() }
-            content { string("Some or all points supplied are not inside the room: Patch [2, 7] is not a valid point inside the room") }
+            content { string("Some or all points supplied are not inside the room: Patch Point(x=2, y=7) is not a valid point inside the room") }
         }
     }
 

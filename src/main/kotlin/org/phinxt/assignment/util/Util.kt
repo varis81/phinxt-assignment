@@ -37,3 +37,17 @@ annotation class TwoElementArray(
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Any>> = []
 )
+
+fun List<Int>.toPoint(): Point {
+    return Point(this[0], this[1])
+}
+
+fun List<List<Int>>.toPoints(): List<Point> {
+    var result = mutableListOf<Point>()
+    this.forEach {
+        result.add(Point(it[0], it[1]))
+    }
+    return result
+}
+
+data class Point(val x: Int, val y: Int)

@@ -1,7 +1,9 @@
 package org.phinxt.assignment.service
 
+import org.phinxt.assignment.util.Point
+
 interface NavigationServiceI {
 
-    fun navigate(roomSize: List<Int>, coords: List<Int>, patches: List<List<Int>>?, instructions: String?, validate: Boolean): HooverNavigationResult
+    fun navigate(roomSize: Point, coords: Point, patches: List<Point>?, instructions: String?, validate: Boolean): HooverNavigationResult
 
 }

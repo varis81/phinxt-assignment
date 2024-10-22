@@ -1,6 +1,7 @@
 package org.phinxt.assignment.service
 
 import org.phinxt.assignment.api.HooverNavigationApiResponseDto
+import org.phinxt.assignment.util.Point
 import org.phinxt.assignment.util.logger
 import org.springframework.stereotype.Service
 
@@ -9,7 +10,7 @@ class HooverNavigationService (
     private val validationService: CoordinateValidationService
 ) :  NavigationServiceI {
 
-    override fun navigate(roomSize: List<Int>, coords: List<Int>, patches: List<List<Int>>?, instructions: String?, validate: Boolean): HooverNavigationResult {
+    override fun navigate(roomSize: Point, coords: Point, patches: List<Point>?, instructions: String?, validate: Boolean): HooverNavigationResult {
         // We add a validate parameter here, so that this service can be used as a standalone service.
         // In our case, validate shall be null since we already validated the input
         if (validate) {
@@ -34,7 +35,7 @@ class HooverNavigationService (
 
         // If there are no instructions, the hoover stays in place.
         if (instructions.isNullOrEmpty()) {
-            return HooverNavigationResult(coords = currentHooverPosition, patchesCleaned)
+            return HooverNavigationResult(coords = listOf(currentHooverPosition.x, currentHooverPosition.y), patchesCleaned)
         }
 
         instructions.uppercase().forEach { direction ->
@@ -44,22 +45,22 @@ class HooverNavigationService (
             }
         }
 
-        return HooverNavigationResult(coords = currentHooverPosition, patchesCleaned)
+        return HooverNavigationResult(coords = listOf(currentHooverPosition.x, currentHooverPosition.y), patchesCleaned)
     }
 
-    private fun moveHoover(roomSize: List<Int>, currentHooverPosition: List<Int>, direction: Char) =
+    private fun moveHoover(roomSize: Point, currentHooverPosition: Point, direction: Char) =
         when (direction) {
-            'N' ->  checkIfPointIsValid(roomSize, listOf(currentHooverPosition[0], currentHooverPosition[1] + 1), currentHooverPosition)
-            'E' ->  checkIfPointIsValid(roomSize, listOf(currentHooverPosition[0] + 1, currentHooverPosition[1]), currentHooverPosition)
-            'W' ->  checkIfPointIsValid(roomSize, listOf(currentHooverPosition[0] - 1, currentHooverPosition[1]), currentHooverPosition)
-            'S' ->  checkIfPointIsValid(roomSize, listOf(currentHooverPosition[0], currentHooverPosition[1] - 1), currentHooverPosition)
+            'N' ->  checkIfPointIsValid(roomSize, Point(x = currentHooverPosition.x, y = currentHooverPosition.y + 1), currentHooverPosition)
+            'E' ->  checkIfPointIsValid(roomSize, Point(x = currentHooverPosition.x + 1, y = currentHooverPosition.y), currentHooverPosition)
+            'W' ->  checkIfPointIsValid(roomSize, Point(x = currentHooverPosition.x - 1, y = currentHooverPosition.y), currentHooverPosition)
+            'S' ->  checkIfPointIsValid(roomSize, Point(x = currentHooverPosition.x, y = currentHooverPosition.y - 1), currentHooverPosition)
             else -> {
                 log.error("Invalid instruction character supplied: $direction")
                 throw InvalidInstrivtionException("Instruction is not valid: ${direction}")
             }
         }
 
-    private fun checkIfPointIsValid(roomSize: List<Int>, newPoint: List<Int>, currentHooverPosition: List<Int>) =
+    private fun checkIfPointIsValid(roomSize: Point, newPoint: Point, currentHooverPosition: Point) =
         if (validationService.isPointInsideRectangle(
                 roomSize = roomSize,
                 point = newPoint
@@ -68,18 +69,18 @@ class HooverNavigationService (
         else
             currentHooverPosition
 
-    private fun convertPatchesToMap(patches: List<List<Int>>?): MutableMap<String, List<Int>> {
-        val map = mutableMapOf<String, List<Int>>()
+    private fun convertPatchesToMap(patches: List<Point>?): MutableMap<String, Point> {
+        val map = mutableMapOf<String, Point>()
         patches?.forEach { patch ->
             map.put(getPointSignature(patch), patch)
         }
         return map
     }
 
-    private fun getPointSignature(point: List<Int>) =
-        "X${point.get(0)}Y${point.get(1)}"
+    private fun getPointSignature(point: Point) =
+        "X${point.x}Y${point.y}"
 
-    private fun isThereAPatchHere(point: List<Int>, patches: MutableMap<String, List<Int>>): Boolean {
+    private fun isThereAPatchHere(point: Point, patches: MutableMap<String, Point>): Boolean {
         if (getPointSignature(point) in patches) {
             // if there is a hit, we have to remove the entry from the map, otherwise we might clean something more than once
             patches.remove(getPointSignature(point))
