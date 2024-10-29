@@ -44,8 +44,8 @@ class CoordinateValidationService : CoordinateValidationI {
     }
 
     override fun isPointInsideRectangle(roomSize: Point, point: Point): Boolean {
-        // we assume that the points (0,0) and (roomX,roomY) are valid positions for the hoover
-        if (point.x >= 0 && point.x <= roomSize.x && point.y >= 0 && point.y <= roomSize.y)
+        // we assume that the points (0,0) and (roomX-1,roomY-1) are valid positions for the hoover
+        if (point.x >= 0 && point.x < roomSize.x && point.y >= 0 && point.y < roomSize.y)
             return true
         return false
     }
